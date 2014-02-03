@@ -1,19 +1,37 @@
 Blog::Application.routes.draw do
 
-  root  'static_pages#home'
+  resources :users do
+    member do
+      get :following, :followers
+    end
+  end
+  resources :sessions, only: [:new, :create, :destroy]
+  resources :microposts, only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
 
-  resources :microposts
-  resources :users
+
+  root :to => 'static_pages#home'
 
   get 'static_pages/help'
   get 'static_pages/about'
   get 'static_pages/contact'
   get 'static_pages/home'
+  get 'users/new'
+  get 'seesions/signup'
+  get 'seesions/signin'
+
+  match '/signup' => 'users#new'
+  match '/signin' => 'sessions#new'
+  match '/signout' => 'sessions#destroy', via: :delete
+
 
   match '/help'  => 'static_pages#help'
   match '/about' => 'static_pages#about'
   match '/contact' => 'static_pages#contact'
   match '/home' => 'static_pages#home'
+
+  match '/signup' => 'users#new'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
